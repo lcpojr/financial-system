@@ -1,25 +1,18 @@
 defmodule FinancialSystem do
   @moduledoc """
-  Financial system methods:
-    create_account() - Create user accounts
-    deposit() - Deposit into the account
-    debit() - Debit the account
-    transfer() - Transfer between accounts
-    split() - Split transfer
-    exchange() - Currency exchange
+  The base module of the system.
+  It contains functions to create accounts and transactions.
   """
-  import Account
-  import Money
 
-  def create_account(name, email, currency) do
-    if check_currency(currency), do: %Account{name: name, email: email, currency: currency}, else: raise ArgumentError, message: "Invalid currency"
-  end
+  import Currency
 
+  @doc "Deposit into the account"
   def deposit(account, currency, amount) do
     currency = String.upcase(currency, :default)
     if check_currency(currency) do
 
       if account.currency == currency do
+        # Default
         %{account | amount: account.amount + amount}
       else
         # Exchange
@@ -32,6 +25,7 @@ defmodule FinancialSystem do
     end
   end
 
+  @doc "Debit the account"
   def debit(account, currency, amount) do
     currency = String.upcase(currency, :default)
     if check_currency(currency) do
@@ -54,6 +48,7 @@ defmodule FinancialSystem do
     end
   end
 
+  @doc "Transfer between accounts"
   def transfer(from_account, to_account, amount) do
     if from_account.amount >= amount do
 
@@ -76,10 +71,12 @@ defmodule FinancialSystem do
     end
   end
 
+  @doc "Split transfer between two or more accounts"
   def split(from_account, list_accounts, amount) do
     if from_account.amount >= amount do
       Enum.map_every(list_accounts, 1, fn(to_account) ->
         if from_account.currency == to_account.data.currency do
+          # Default
           %{to_account.data | amount: to_account.data.amount + (amount * to_account.percentage / 100)}
         else
           # Exchange
@@ -92,14 +89,15 @@ defmodule FinancialSystem do
     end
   end
 
-  # TODO: Should calculate IOF when necessary
+  @doc "Currency exchange"
+  # TODO: Should calculate IOF when necessary in the future
   def exchange(from_currency, to_currency, amount) do
     from_rate_key = "USD#{String.upcase(from_currency, :default)}"
     to_rate_key = "USD#{String.upcase(to_currency, :default)}"
 
-    rate = get_rate(from_currency, to_currency)["quotes"]
-    diference = rate[from_rate_key] * rate[to_rate_key]
-    diference * amount
+    rate = get_rate(from_currency, to_currency)["quotes"] # Get the currency rate
+    diference = rate[from_rate_key] * rate[to_rate_key] # Calculating the diference
+    diference * amount # Calculating the exchange
   end
 
 end
