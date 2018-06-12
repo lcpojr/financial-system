@@ -63,6 +63,7 @@ defmodule FinancialSystem do
 
         from_account = %{from_account | amount: from_account.amount - amount}
         to_account = %{to_account | amount: to_account.amount + value_exchange}
+
         {from_account, to_account}
       end
 
@@ -74,7 +75,8 @@ defmodule FinancialSystem do
   @doc "Split transfer between two or more accounts"
   def split(from_account, list_accounts, amount) do
     if from_account.amount >= amount do
-      Enum.map_every(list_accounts, 1, fn(to_account) ->
+
+      list_accounts = Enum.map_every(list_accounts, 1, fn(to_account) ->
         if from_account.currency == to_account.data.currency do
           # Default
           %{to_account.data | amount: to_account.data.amount + (amount * to_account.percentage / 100)}
@@ -84,6 +86,9 @@ defmodule FinancialSystem do
           %{to_account.data | amount: to_account.data.amount + value_exchange}
         end
       end)
+
+      {%{from_account | amount: from_account.amount - amount}, list_accounts}
+
     else
       raise ArgumentError, message: "Insufficient funds"
     end
