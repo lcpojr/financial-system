@@ -21,6 +21,7 @@ defmodule FinancialSystem.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:decimal, "~> 1.0"}, # Decimal
       {:httpotion, "~> 3.1.0"}, # HTTP
       {:poison, "~> 3.1"} # JSON
     ]
