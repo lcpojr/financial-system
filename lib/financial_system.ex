@@ -54,6 +54,28 @@ defmodule FinancialSystem do
     end
   end
 
+  def transfer(from_account, to_account, amount) do
+    if from_account.amount >= amount do
+
+      if from_account.currency == to_account.currency do
+        # Default
+        from_account = %{from_account | amount: from_account.amount - amount}
+        to_account = %{to_account | amount: to_account.amount + amount}
+        {from_account, to_account}
+      else
+        # Exchange
+        value_exchange = exchange(from_account.currency, to_account.currency, amount)
+
+        from_account = %{from_account | amount: from_account.amount - amount}
+        to_account = %{to_account | amount: to_account.amount + value_exchange}
+        {from_account, to_account}
+      end
+
+    else
+      raise ArgumentError, message: "Insufficient funds"
+    end
+  end
+
   # TODO: Should calculate IOF when necessary
   def exchange(from_currency, to_currency, amount) do
     from_rate_key = "USD#{String.upcase(from_currency, :default)}"
