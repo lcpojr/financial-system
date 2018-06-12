@@ -76,6 +76,22 @@ defmodule FinancialSystem do
     end
   end
 
+  def split(from_account, list_accounts, amount) do
+    if from_account.amount >= amount do
+      Enum.map_every(list_accounts, 1, fn(to_account) ->
+        if from_account.currency == to_account.data.currency do
+          %{to_account.data | amount: to_account.data.amount + (amount * to_account.percentage / 100)}
+        else
+          # Exchange
+          value_exchange = exchange(from_account.currency, to_account.data.currency, (amount * to_account.percentage / 100))
+          %{to_account.data | amount: to_account.data.amount + value_exchange}
+        end
+      end)
+    else
+      raise ArgumentError, message: "Insufficient funds"
+    end
+  end
+
   # TODO: Should calculate IOF when necessary
   def exchange(from_currency, to_currency, amount) do
     from_rate_key = "USD#{String.upcase(from_currency, :default)}"
