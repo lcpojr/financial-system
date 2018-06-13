@@ -5,14 +5,15 @@ Elixir project for the [Stone Tech Challenge](https://github.com/stone-payments/
 ## About
 
 The idea of this project is create a set of tools capable of dealing with monetary operations like deposits, debits, transfer between accounts and exchange.  
-The currencys operated on the system should be in compliance with [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217).
+
+* The currencys operated on the system should be in compliance with [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217).
 
 ## Requeriments / Dependencies
 
-- **[Elixir]**(https://github.com/elixir-lang/elixir)
-- **[HTTPotion]**(https://github.com/myfreeweb/httpotion)
-- **[Poison]**(https://github.com/devinus/poison)
-- **[Decimal]**(https://github.com/ericmj/decimal)
+- [Elixir](https://github.com/elixir-lang/elixir)
+- [HTTPotion](https://github.com/myfreeweb/httpotion) (To make the HTTP requests)
+- [Poison](https://github.com/devinus/poison) (To parse the HTTP Json response)
+- [Decimal](https://github.com/ericmj/decimal) (To arbitrary precision arithmetic)
 
 ## Installation
 
@@ -65,3 +66,4 @@ list_accounts = [
 ### Testing
 
 `mix test` to run unit tests.
+`MIX_ENV=test mix coveralls` to run coverage test.
