@@ -14,8 +14,7 @@ defmodule Currency do
   Get a list of currencys in compliance with ISO 4217
 
   ## Examples
-    iex> Currency.get_currencys()
-    %{"currencies" => %{"AUD" => "Australian Dollar", "CZK" => "Czech Republic Koruna", ...}
+    Currency.get_currencys()
   """
   def get_currencys() do
     response = HTTPotion.get("http://apilayer.net/api/list?%20access_key=#{@api_key}")
@@ -26,11 +25,8 @@ defmodule Currency do
   Get the currency data from json file in case of unable to get in the server
 
   ## Examples
-    iex> Currency.get_json("currency_list.json")
-    %{"currencies" => %{"AUD" => "Australian Dollar", "CZK" => "Czech Republic Koruna", ...}
-
-    iex> Currency.get_json("currency_rates.json")
-    %{"privacy" => "https://currencylayer.com/privacy", "quotes" => %{"USDMZN" => 58.790001, "USDRWF" => 849.429993, ... }}
+    Currency.get_json("currency_list.json")<br/>
+    Currency.get_json("currency_rates.json")
   """
   def get_json(file_name) do
     case File.read(file_name) do
@@ -43,8 +39,7 @@ defmodule Currency do
   Get the currency rate in relation to USD
 
   ## Examples
-    iex> Currency.get_rate("BRL", "USD")
-    %{"privacy" => "https://currencylayer.com/privacy", "quotes" => %{"USDBRL" => 3.710303, "USDUSD" => 1}, ...}
+    Currency.get_rate("BRL", "USD")
   """
   def get_rate(from_currency, to_currency) do
     from_currency = String.upcase(from_currency, :default)
@@ -57,8 +52,7 @@ defmodule Currency do
   Check if a currency is on the list
 
   ## Examples
-    iex> Currency.check_currency("BRL")
-    true
+    Currency.check_currency("BRL")
   """
   def check_currency(currency) do
     currency = String.upcase(currency, :default)

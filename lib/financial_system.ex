@@ -10,9 +10,8 @@ defmodule FinancialSystem do
   Deposit into the account
 
   ## Examples
-    iex> account = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL")
-    iex> account = FinancialSystem.deposit(account, "BRL", 100)
-    %Account{amount: 100, currency: "BRL", email: "luiz@gmail.com", name: "LUIZ CARLOS"}
+    account = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL")<br/>
+    account = FinancialSystem.deposit(account, "BRL", 100)
   """
   def deposit(account, currency, amount) do
     currency = String.upcase(currency, :default)
@@ -36,9 +35,8 @@ defmodule FinancialSystem do
   Debit the account
 
   ## Examples
-    iex> account = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 100)
-    iex> account = FinancialSystem.debit(account, "BRL", 20)
-    %Account{amount: 80, currency: "BRL", email: "luiz@gmail.com", name: "LUIZ CARLOS"}
+    account = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 100)<br/>
+    account = FinancialSystem.debit(account, "BRL", 20)
   """
   def debit(account, currency, amount) do
     currency = String.upcase(currency, :default)
@@ -66,13 +64,9 @@ defmodule FinancialSystem do
   Transfer between accounts
 
   ## Examples
-    iex> account1 = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 100)
-    iex> account2 = Account.create_account("JOÃO PEDRO", "joao@gmail.com", "BRL")
-    iex> {account1, account2} = FinancialSystem.transfer(account1, account2, 50)
-    {
-      %Account{amount: 50, currency: "BRL", email: "luiz@gmail.com", name: "LUIZ CARLOS"},
-      %Account{amount: 50, currency: "BRL", email: "joao@gmail.com", name: "JOÃO PEDRO"}
-    }
+    account1 = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 100)<br/>
+    account2 = Account.create_account("JOÃO PEDRO", "joao@gmail.com", "BRL")<br/>
+    {account1, account2} = FinancialSystem.transfer(account1, account2, 50)
   """
   def transfer(from_account, to_account, amount) do
     if from_account.amount >= amount do
@@ -101,20 +95,11 @@ defmodule FinancialSystem do
   Split transfer between two or more accounts
 
   ## Examples
-    iex> account1 = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 200)
-    iex> account2 = Account.create_account("JOÃO PEDRO", "joao@gmail.com", "BRL")
-    iex> account3 = Account.create_account("CECILIA MARIA", "cecilia@gmail.com", "USD")
-
-    iex> list_accounts = [%{ data: account2, percentage: 50},%{ data: account3, percentage: 50}]
-
-    iex> {account1, list_accounts} = FinancialSystem.split(account1, list_accounts, 100)
-    {
-      %Account{amount: 0, currency: "BRL", email: "luiz@gmail.com", name: "LUIZ CARLOS"},
-      [
-        %Account{amount: 50.0, currency: "BRL", email: "joao@gmail.com", name: "JOÃO PEDRO"},
-        %Account{amount: 185.51515, currency: "USD", email: "cecilia@gmail.com", name: "CECILIA MARIA"}
-      ]
-    }
+    account1 = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 200)<br/>
+    account2 = Account.create_account("JOÃO PEDRO", "joao@gmail.com", "BRL")<br/>
+    account3 = Account.create_account("CECILIA MARIA", "cecilia@gmail.com", "USD")<br/>
+    list_accounts = [%{ data: account2, percentage: 50},%{ data: account3, percentage: 50}]<br/>
+    {account1, list_accounts} = FinancialSystem.split(account1, list_accounts, 100)
   """
   def split(from_account, list_accounts, amount) do
     if from_account.amount >= amount do
@@ -141,8 +126,7 @@ defmodule FinancialSystem do
   Currency exchange
 
   ## Examples
-    iex> FinancialSystem.exchange("BRL","USD", 100)
-    26.91043212502802
+    FinancialSystem.exchange("BRL","USD", 100)
   """
   def exchange(from_currency, to_currency, amount) do
     from_rate_key = "USD#{String.upcase(from_currency, :default)}"

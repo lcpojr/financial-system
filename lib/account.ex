@@ -11,8 +11,7 @@ defmodule Account do
   Create user accounts
 
   ## Examples
-    iex> Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)
-    %Account{amount: 500, currency: "BRL", email: "luiz@gmail.com", name: "LUIZ CARLOS"}
+    Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)
   """
   def create_account(name, email, currency, amount \\ 0) do
     if check_currency(currency), do: %Account{name: name, email: email, currency: currency, amount: amount}, else: raise ArgumentError, message: "Invalid currency"

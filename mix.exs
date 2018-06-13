@@ -8,6 +8,15 @@ defmodule FinancialSystem.Mixfile do
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
       deps: deps(),
+
+      # Docs
+      name: "FinancialSystem",
+      source_url: "https://github.com/lcpojr/financial-system/",
+      homepage_url: "https://github.com/lcpojr/financial-system/",
+
+      # Coverage test
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test]
     ]
   end
 
@@ -24,6 +33,8 @@ defmodule FinancialSystem.Mixfile do
       {:decimal, "~> 1.0"}, # Decimal
       {:httpotion, "~> 3.1.0"}, # HTTP
       {:poison, "~> 3.1"}, # JSON
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false}, # Documentation
+      {:excoveralls, "~> 0.8", only: :test} # Coverage test
     ]
   end
 end
