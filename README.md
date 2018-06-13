@@ -7,6 +7,9 @@ Elixir project for the [Stone Tech Challenge](https://github.com/stone-payments/
 The idea of this project is create a set of tools capable of dealing with monetary operations like deposits, debits, transfer between accounts and exchange.  
 
 * The currencys operated on the system should be in compliance with [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217).
+* Currencys and rates are picked up from https://currencylayer.com/ just to keep the system updated as much as possible.
+* In case of not being able to obtain the data, the system will use the Json files in the project.
+* The rates and currencies in the json files were extracted from https://currencylayer.com/ on 12/6/2018.
 
 ## Requeriments / Dependencies
 
@@ -65,5 +68,5 @@ list_accounts = [
 
 ### Testing
 
-`mix test` to run unit tests.
+`mix test` to run unit tests.  
 `MIX_ENV=test mix coveralls` to run coverage test.
