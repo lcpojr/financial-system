@@ -1,4 +1,4 @@
-# Financial System
+# Financial System [![Build Status](https://semaphoreci.com/api/v1/lcpojr/financial-system/branches/formatter/badge.svg)](https://semaphoreci.com/lcpojr/financial-system)
 
 Elixir project for the [Stone Tech Challenge](https://github.com/stone-payments/tech-challenge)
 
@@ -13,7 +13,7 @@ The idea of this project is create a set of tools capable of dealing with moneta
 
 ## Requeriments / Dependencies
 
-- [Elixir](https://github.com/elixir-lang/elixir)
+- [Elixir](https://github.com/elixir-lang/elixir) (v1.6.5)
 - [HTTPotion](https://github.com/myfreeweb/httpotion) (To make the HTTP requests)
 - [Poison](https://github.com/devinus/poison) (To parse the HTTP Json response)
 - [Decimal](https://github.com/ericmj/decimal) (To arbitrary precision arithmetic)
