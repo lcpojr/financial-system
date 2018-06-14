@@ -5,7 +5,6 @@ defmodule Account do
   @enforce_keys [:name, :email, :currency]
   defstruct name: "", email: "", currency: "USD", amount: 0
 
-
   import Currency
 
   @doc """
@@ -41,7 +40,8 @@ defmodule Account do
     Account.has_amount(account, 100)
   """
   def has_amount(account, amount) do
-    if Decimal.cmp(account.amount, amount) == :gt or Decimal.cmp(account.amount, amount) == :eq, do: true, else: false
+    if Decimal.cmp(account.amount, amount) == :gt or Decimal.cmp(account.amount, amount) == :eq,
+      do: true,
+      else: false
   end
-  
 end

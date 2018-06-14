@@ -73,3 +73,20 @@ list_accounts = [
 
 `mix test` to run unit tests.  
 `MIX_ENV=test mix coveralls` to run coverage test.
+
+## Formatation
+
+To auto format the code and be sure that it is in compliance with the language style guide use `mix format`.
+
+## Documentation
+
+To generate a documentation by the code uses `mix docs`.
+It will create a doc folder in the project with the HTML pages.
+
+## Quality control
+
+To ensure the quality of the code some tools were used:
+
+* [Elixir Formatter](https://hexdocs.pm/mix/master/Mix.Tasks.Format.html) to ensure the code compliance with the style guide.
+* [ExCoveralls](https://github.com/parroty/excoveralls) for couverage test.
+* [Semaphore](https://semaphoreci.com/) for continuous integration.
