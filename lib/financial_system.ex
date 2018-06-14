@@ -4,6 +4,7 @@ defmodule FinancialSystem do
   It contains functions to create accounts and transactions.
   """
 
+  import Account
   import Currency
 
   @doc """
@@ -15,20 +16,21 @@ defmodule FinancialSystem do
   """
   def deposit(account, currency, amount) do
     currency = String.upcase(currency, :default)
+    amount = Decimal.new(amount)
+
     if check_currency(currency) do
 
-      if account.currency == currency do
-        # Default
-        %{account | amount: account.amount + amount}
-      else
-        # Exchange
-        value_exchange = exchange(currency, account.currency, amount)
-        %{account | amount: account.amount + value_exchange}
+      amount = cond do
+        account.currency != currency -> exchange(account.currency, currency, amount) # Exchange
+        true -> amount
       end
 
+      %{account | amount: Decimal.add(account.amount, amount) |> Decimal.round(2)}
+
     else
-      raise ArgumentError, message: "Invalid currency"
+      {:error, "Invalid currency"}
     end
+
   end
 
   @doc """
@@ -40,24 +42,27 @@ defmodule FinancialSystem do
   """
   def debit(account, currency, amount) do
     currency = String.upcase(currency, :default)
+    amount = Decimal.new(amount)
+
     if check_currency(currency) do
 
-      if account.amount >= amount do
-        if account.currency == currency do
-          # Default
-          %{account | amount: account.amount - amount}
-        else
-          # Exchange
-          value_exchange = exchange(account.currency, currency, amount)
-          %{account | amount: account.amount - value_exchange}
-        end
+      if has_amount(account, amount) do
+
+          amount = cond do
+            account.currency != currency -> exchange(account.currency, currency, amount) # Exchange
+            true -> amount
+          end
+
+          %{account | amount: Decimal.sub(account.amount, amount) |> Decimal.round(2)}
+
       else
-        raise ArgumentError, message: "Insufficient funds"
+        {:error, "Insufficient funds"}
       end
 
     else
-      raise ArgumentError, message: "Invalid currency"
+      {:error, "Invalid currency"}
     end
+
   end
 
   @doc """
@@ -69,26 +74,25 @@ defmodule FinancialSystem do
     {account1, account2} = FinancialSystem.transfer(account1, account2, 50)
   """
   def transfer(from_account, to_account, amount) do
-    if from_account.amount >= amount do
+    amount = Decimal.new(amount)
 
-      if from_account.currency == to_account.currency do
-        # Default
-        from_account = %{from_account | amount: from_account.amount - amount}
-        to_account = %{to_account | amount: to_account.amount + amount}
-        {from_account, to_account}
-      else
-        # Exchange
-        value_exchange = exchange(from_account.currency, to_account.currency, amount)
+    if has_amount(from_account, amount) do
 
-        from_account = %{from_account | amount: from_account.amount - amount}
-        to_account = %{to_account | amount: to_account.amount + value_exchange}
+      from_account = debit(from_account, from_account.currency, amount)
 
-        {from_account, to_account}
+      amount = cond do
+        from_account.currency != to_account.currency -> exchange(from_account.currency, to_account.currency, amount) # Exchange
+        true -> amount
       end
 
+      to_account = deposit(to_account, to_account.currency, amount)
+
+      {from_account, to_account}
+
     else
-      raise ArgumentError, message: "Insufficient funds"
+      {:error, "Insufficient funds"}
     end
+
   end
 
   @doc """
@@ -102,24 +106,25 @@ defmodule FinancialSystem do
     {account1, list_accounts} = FinancialSystem.split(account1, list_accounts, 100)
   """
   def split(from_account, list_accounts, amount) do
-    if from_account.amount >= amount do
+    amount = Decimal.new(amount)
+
+    if has_amount(from_account, amount) do
+      from_account = debit(from_account, from_account.currency, amount)
 
       list_accounts = Enum.map_every(list_accounts, 1, fn(to_account) ->
-        if from_account.currency == to_account.data.currency do
-          # Default
-          %{to_account.data | amount: to_account.data.amount + (amount * to_account.percentage / 100)}
-        else
-          # Exchange
-          value_exchange = exchange(from_account.currency, to_account.data.currency, (amount * to_account.percentage / 100))
-          %{to_account.data | amount: to_account.data.amount + value_exchange}
-        end
+        # Calculating the new amounts by percentage
+
+        value_percentage = Decimal.mult(amount, to_account.percentage) |> Decimal.div(100) # Get the percentage of the amount
+        deposit(to_account.data, from_account.currency, value_percentage)
+
       end)
 
-      {%{from_account | amount: from_account.amount - amount}, list_accounts}
+      {from_account, list_accounts}
 
     else
-      raise ArgumentError, message: "Insufficient funds"
+      {:error, "Insufficient funds"}
     end
+
   end
 
   @doc """
@@ -129,15 +134,36 @@ defmodule FinancialSystem do
     FinancialSystem.exchange("BRL","USD", 100)
   """
   def exchange(from_currency, to_currency, amount) do
-    from_rate_key = "USD#{String.upcase(from_currency, :default)}"
-    to_rate_key = "USD#{String.upcase(to_currency, :default)}"
+    if check_currency(from_currency) and check_currency(to_currency) do
+      amount = Decimal.new(amount)
+      from_currency = String.upcase(from_currency, :default)
+      to_currency = String.upcase(to_currency, :default)
 
-    rate = get_rate(from_currency, to_currency)["quotes"] # Get the currency rate
-    cond do
-      from_currency == to_currency -> amount
-      from_currency == "USD" -> amount * rate[to_rate_key]
-      to_currency == "USD" -> amount / rate[from_rate_key]
-      true -> (amount / rate[from_rate_key]) * rate[to_rate_key]
+      rate_list = get_rate(from_currency, to_currency)["quotes"] # Get the currency rate
+
+      from_rate = Decimal.new(rate_list["USD#{from_currency}"]) # Get from_currency rate in decimal
+      to_rate = Decimal.new(rate_list["USD#{to_currency}"]) # Get to_currency rate in decimal
+
+      cond do
+        from_currency == to_currency ->
+          amount # Same currency
+
+        from_currency == "USD" ->
+          Decimal.div(amount, to_rate)
+          |> Decimal.round(2) # Dollar to another currency
+
+        to_currency == "USD" ->
+          Decimal.mult(amount, from_rate)
+          |> Decimal.round(2) # Some currency to dollar
+
+        true ->
+          Decimal.div(amount, to_rate)
+          |> Decimal.mult(from_rate)
+          |> Decimal.round(2) # Different currencies that isen't dollar
+      end
+
+    else
+      {:error, "Invalid currency"}
     end
   end
 

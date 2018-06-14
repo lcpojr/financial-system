@@ -6,10 +6,10 @@ Elixir project for the [Stone Tech Challenge](https://github.com/stone-payments/
 
 The idea of this project is create a set of tools capable of dealing with monetary operations like deposits, debits, transfer between accounts and exchange.  
 
-* The currencys operated on the system should be in compliance with [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217).
-* Currencys and rates are picked up from https://currencylayer.com/ just to keep the system updated as much as possible.
+* The currencies operated on the system should be in compliance with [ISO 4217](https://pt.wikipedia.org/wiki/ISO_4217).
+* Currencies and rates are picked up from https://currencylayer.com/ just to keep the system updated as much as possible.
 * In case of not being able to obtain the data, the system will use the Json files in the project.
-* The rates and currencies in the json files were extracted from https://currencylayer.com/ on 12/6/2018.
+* The rates and currencies in the json files were extracted from https://currencylayer.com/ on 6/12/2018.
 
 ## Requeriments / Dependencies
 
@@ -50,9 +50,12 @@ account3 = Account.create_account("CECILIA MARIA", "cecilia@gmail.com", "USD")
 account2 = FinancialSystem.deposit(account2, "BRL", 200) # Deposit in the same currency
 account3 = FinancialSystem.deposit(account3, "BRL", 500) # Deposit with exchange
 
+# Get account amount
+Account.get_amount(account1)
+
 # Debit from accounts
-account2 = FinancialSystem.deposit(account2, "BRL", 100) # Debit in the same currency
-account3 = FinancialSystem.deposit(account3, "BRL", 100) # Debit with exchange
+account2 = FinancialSystem.debit(account2, "BRL", 100) # Debit in the same currency
+account3 = FinancialSystem.debit(account3, "BRL", 100) # Debit with exchange
 
 # Transfer between accounts
 {account1, account2} = FinancialSystem.transfer(account1, account2, 50) # Transfer in the same currency
