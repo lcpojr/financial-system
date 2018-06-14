@@ -1,4 +1,4 @@
-# Financial System [![Build Status](https://semaphoreci.com/api/v1/lcpojr/financial-system/branches/formatter/badge.svg)](https://semaphoreci.com/lcpojr/financial-system)
+# Financial System [![Build Status](https://semaphoreci.com/api/v1/lcpojr/financial-system/branches/formatter/badge.svg)](https://semaphoreci.com/lcpojr/financial-system) [![Coverage Status](https://coveralls.io/repos/github/lcpojr/financial-system/badge.svg)](https://coveralls.io/github/lcpojr/financial-system)
 
 Elixir project for the [Stone Tech Challenge](https://github.com/stone-payments/tech-challenge)
 
