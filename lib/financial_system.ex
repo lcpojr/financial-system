@@ -109,18 +109,22 @@ defmodule FinancialSystem do
     amount = Decimal.new(amount)
 
     if has_amount(from_account, amount) do
-      from_account = debit(from_account, from_account.currency, amount)
+      sum_percent = Enum.reduce(list_accounts, fn(to_account, frist_account) -> to_account.percentage + frist_account.percentage end)
+      if sum_percent == 100 do
 
-      list_accounts = Enum.map_every(list_accounts, 1, fn(to_account) ->
-        # Calculating the new amounts by percentage
+        from_account = debit(from_account, from_account.currency, amount)
 
-        value_percentage = Decimal.mult(amount, to_account.percentage) |> Decimal.div(100) # Get the percentage of the amount
-        deposit(to_account.data, from_account.currency, value_percentage)
+        list_accounts = Enum.map_every(list_accounts, 1, fn(to_account) ->
+          # Calculating the new amounts by percentage
+          value_percentage = Decimal.mult(amount, to_account.percentage) |> Decimal.div(100) # Get the percentage of the amount
+          deposit(to_account.data, from_account.currency, value_percentage)
+        end)
 
-      end)
+        {from_account, list_accounts}
 
-      {from_account, list_accounts}
-
+      else
+        {:error, "Invalid percentage"}
+      end
     else
       {:error, "Insufficient funds"}
     end
