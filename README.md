@@ -88,5 +88,5 @@ It will create a doc folder in the project with the HTML pages.
 To ensure the quality of the code some tools were used:
 
 * [Elixir Formatter](https://hexdocs.pm/mix/master/Mix.Tasks.Format.html) to ensure the code compliance with the style guide.
-* [ExCoveralls](https://github.com/parroty/excoveralls) for couverage test.
-* [Semaphore](https://semaphoreci.com/) for continuous integration.
+* [ExCoveralls](https://coveralls.io/github/lcpojr/financial-system) for couverage test.
+* [Semaphore](https://semaphoreci.com/lcpojr/financial-system) for continuous integration.
