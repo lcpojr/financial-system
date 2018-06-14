@@ -124,7 +124,6 @@ defmodule FinancialSystem do
         list_accounts =
           Enum.map_every(list_accounts, 1, fn to_account ->
             # Calculating the new amounts by percentage
-            # Get the percentage of the amount
             value_percentage = Decimal.mult(amount, to_account.percentage) |> Decimal.div(100)
             deposit(to_account.data, from_account.currency, value_percentage)
           end)
@@ -164,19 +163,19 @@ defmodule FinancialSystem do
           amount
 
         from_currency == "USD" ->
-          Decimal.div(amount, to_rate)
           # Dollar to another currency
+          Decimal.div(amount, to_rate)
           |> Decimal.round(2)
 
         to_currency == "USD" ->
-          Decimal.mult(amount, from_rate)
           # Some currency to dollar
+          Decimal.mult(amount, from_rate)
           |> Decimal.round(2)
 
         true ->
+          # Different currencies that isen't dollar
           Decimal.div(amount, to_rate)
           |> Decimal.mult(from_rate)
-          # Different currencies that isen't dollar
           |> Decimal.round(2)
       end
     else
