@@ -24,6 +24,6 @@ defmodule CurrencyTest do
 
   test "Currencies should be in compliance with ISO 4217" do
     # Check if invalid currency
-    assert Currency.check_currency("ERROR") == false
+    assert Currency.check_currency("USD")
   end
 end
