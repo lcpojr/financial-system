@@ -57,11 +57,20 @@ defmodule FinancialSystemTest do
       %{ data: account5, percentage: 50}
     ]
 
-    assert FinancialSystem.split(account3, list_accounts, 100)
+    assert FinancialSystem.split(account3, list_accounts, 100) # Split between 2 accounts
+  end
+
+  test "A split should be cancelled if wrong percentage was passed", %{account3: account3, account4: account4, account5: account5} do
+    list_accounts = [
+      %{ data: account4, percentage: 40},
+      %{ data: account5, percentage: 40}
+    ]
+
+    assert FinancialSystem.split(account3, list_accounts, 100) == {:error, "Invalid percentage"} # Split with wrong percentage
   end
 
   test "User should be able to exchange money between different currencies" do
-    assert FinancialSystem.exchange("BRL", "EUR", 100)
+    assert FinancialSystem.exchange("BRL", "EUR", 100) # Exchange currency
   end
 
 end
