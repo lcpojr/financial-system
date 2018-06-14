@@ -11,12 +11,12 @@ defmodule Currency do
   @api_key "dfbc0e88687fcbe50c40eedccc30039d"
 
   @doc """
-  Get a list of currencys in compliance with ISO 4217
+  Get a list of currencies in compliance with ISO 4217
 
   ## Examples
-    Currency.get_currencys()
+    Currency.get_currencies()
   """
-  def get_currencys() do
+  def get_currencies() do
     response = HTTPotion.get("http://apilayer.net/api/list?%20access_key=#{@api_key}")
     if HTTPotion.Response.success?(response), do: Poison.decode!(response.body), else: get_json("currency_list.json")
   end
@@ -31,7 +31,7 @@ defmodule Currency do
   def get_json(file_name) do
     case File.read(file_name) do
       {:ok, body} -> Poison.decode!(body)
-      {:error, reason} -> raise "Unable to get the data from server and file: #{reason}"
+      {:error, reason} -> {:error, "Unable to get the data from server and file: #{reason}"}
     end
   end
 
@@ -45,7 +45,7 @@ defmodule Currency do
     from_currency = String.upcase(from_currency, :default)
     to_currency = String.upcase(to_currency, :default)
     response = HTTPotion.get("http://apilayer.net/api/live?access_key=#{@api_key}&currencies=#{from_currency},#{to_currency}&format=1")
-    if response.status_code == 200, do: Poison.decode!(response.body), else: get_json("currency_rates.json")
+    if HTTPotion.Response.success?(response), do: Poison.decode!(response.body), else: get_json("currency_rates.json")
   end
 
   @doc """
@@ -55,8 +55,7 @@ defmodule Currency do
     Currency.check_currency("BRL")
   """
   def check_currency(currency) do
-    currency = String.upcase(currency, :default)
-    if Map.has_key?(get_currencys()["currencies"], String.upcase(currency, :default)), do: true, else: false
+    if Map.has_key?(get_currencies()["currencies"], String.upcase(currency, :default)), do: true, else: false
   end
 
 end

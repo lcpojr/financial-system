@@ -20,7 +20,7 @@ defmodule FinancialSystemTest do
   end
 
   test "User should be able to deposit foreign money into the account", %{account1: account} do
-    assert FinancialSystem.deposit(account, "USD", 100) # Deposit in the different currency
+    assert FinancialSystem.deposit(account, "USD", 100) # Deposit in different currency
   end
 
   test "User should be able to debit money of the account", %{account2: account} do
@@ -28,23 +28,27 @@ defmodule FinancialSystemTest do
   end
 
   test "User should be able to debit foreign money of the account", %{account2: account} do
-    assert FinancialSystem.debit(account, "USD", 20) # Debit in same currency
+    assert FinancialSystem.debit(account, "USD", 20) # Debit in different currency
   end
 
   test "User should be able to transfer money to another account", %{account1: account1, account2: account2} do
-    assert FinancialSystem.transfer(account1, account2, 50) # Transfer in same currencys
+    assert FinancialSystem.transfer(account1, account2, 50) # Transfer in same currencies
   end
 
-  test "User should be able to transfer money to another account with different currency", %{account3: account3, account4: account4} do
-    assert FinancialSystem.transfer(account3, account4, 50) # Transfer in same currencys
+  test "User should be able to transfer dollars to another account with different currency", %{account3: account3, account4: account4} do
+    assert FinancialSystem.transfer(account3, account4, 50) # Transfer in dollars to another currencies
+  end
+
+  test "User should be able to transfer money to another account with different currency", %{account4: account4, account5: account5} do
+    assert FinancialSystem.transfer(account4, account5, 5) # Transfer in different currencies
   end
 
   test "User cannot transfer if not enough money available on the account", %{account5: account5, account2: account2} do
-    assert catch_error(FinancialSystem.transfer(account5, account2, 2000)) # Transfer with insufficient amount
+    assert FinancialSystem.transfer(account5, account2, 2000) == {:error, "Insufficient funds"} # Transfer with insufficient amount
   end
 
   test "A transfer should be cancelled if an error occurs", %{account1: account1} do
-    assert catch_error(FinancialSystem.transfer(account1, nil, 50)) # Transfer with invalid account
+    assert_raise UndefinedFunctionError, fn-> FinancialSystem.transfer(account1, nil, 50) end # Transfer with invalid account
   end
 
   test "A transfer can be splitted between 2 or more accounts", %{account3: account3, account4: account4, account5: account5} do
@@ -59,5 +63,5 @@ defmodule FinancialSystemTest do
   test "User should be able to exchange money between different currencies" do
     assert FinancialSystem.exchange("BRL", "EUR", 100)
   end
-  
+
 end
