@@ -76,7 +76,7 @@ list_accounts = [
 
 ## Formatation
 
-To auto format the code and be sure that it is in compliance with the language style guide use `mix format`.
+To auto format the code and be sure that it's in compliance with the language style guide use `mix format`.
 
 ## Documentation
 
