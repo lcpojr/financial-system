@@ -18,7 +18,10 @@ defmodule Currency do
   """
   def get_currencies() do
     response = HTTPotion.get("http://apilayer.net/api/list?%20access_key=#{@api_key}")
-    if HTTPotion.Response.success?(response), do: Poison.decode!(response.body), else: get_json("currency_list.json")
+
+    if HTTPotion.Response.success?(response),
+      do: Poison.decode!(response.body),
+      else: get_json("currency_list.json")
   end
 
   @doc """
@@ -44,8 +47,17 @@ defmodule Currency do
   def get_rate(from_currency, to_currency) do
     from_currency = String.upcase(from_currency, :default)
     to_currency = String.upcase(to_currency, :default)
-    response = HTTPotion.get("http://apilayer.net/api/live?access_key=#{@api_key}&currencies=#{from_currency},#{to_currency}&format=1")
-    if HTTPotion.Response.success?(response), do: Poison.decode!(response.body), else: get_json("currency_rates.json")
+
+    response =
+      HTTPotion.get(
+        "http://apilayer.net/api/live?access_key=#{@api_key}&currencies=#{from_currency},#{
+          to_currency
+        }&format=1"
+      )
+
+    if HTTPotion.Response.success?(response),
+      do: Poison.decode!(response.body),
+      else: get_json("currency_rates.json")
   end
 
   @doc """
@@ -55,7 +67,8 @@ defmodule Currency do
     Currency.check_currency("BRL")
   """
   def check_currency(currency) do
-    if Map.has_key?(get_currencies()["currencies"], String.upcase(currency, :default)), do: true, else: false
+    if Map.has_key?(get_currencies()["currencies"], String.upcase(currency, :default)),
+      do: true,
+      else: false
   end
-
 end

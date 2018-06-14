@@ -1,4 +1,4 @@
-# Financial System
+# Financial System [![Build Status](https://semaphoreci.com/api/v1/lcpojr/financial-system/branches/formatter/badge.svg)](https://semaphoreci.com/lcpojr/financial-system) [![Coverage Status](https://coveralls.io/repos/github/lcpojr/financial-system/badge.svg?branch=master)](https://coveralls.io/github/lcpojr/financial-system?branch=master)
 
 Elixir project for the [Stone Tech Challenge](https://github.com/stone-payments/tech-challenge)
 
@@ -13,7 +13,7 @@ The idea of this project is create a set of tools capable of dealing with moneta
 
 ## Requeriments / Dependencies
 
-- [Elixir](https://github.com/elixir-lang/elixir)
+- [Elixir](https://github.com/elixir-lang/elixir) (v1.6.5)
 - [HTTPotion](https://github.com/myfreeweb/httpotion) (To make the HTTP requests)
 - [Poison](https://github.com/devinus/poison) (To parse the HTTP Json response)
 - [Decimal](https://github.com/ericmj/decimal) (To arbitrary precision arithmetic)
@@ -73,3 +73,20 @@ list_accounts = [
 
 `mix test` to run unit tests.  
 `MIX_ENV=test mix coveralls` to run coverage test.
+
+## Formatation
+
+To auto format the code and be sure that it is in compliance with the language style guide use `mix format`.
+
+## Documentation
+
+To generate a documentation by the code uses `mix docs`.
+It will create a doc folder in the project with the HTML pages.
+
+## Quality control
+
+To ensure the quality of the code some tools were used:
+
+* [Elixir Formatter](https://hexdocs.pm/mix/master/Mix.Tasks.Format.html) to ensure the code compliance with the style guide.
+* [ExCoveralls](https://coveralls.io/github/lcpojr/financial-system) for couverage test.
+* [Semaphore](https://semaphoreci.com/lcpojr/financial-system) for continuous integration.
