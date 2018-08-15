@@ -11,64 +11,99 @@ defmodule Currency do
   @api_key "dfbc0e88687fcbe50c40eedccc30039d"
 
   @doc """
-  Get a list of currencies in compliance with ISO 4217
+  Check if a currency is in compliance with ISO 4217.
 
   ## Examples
-    Currency.get_currencies()
+    Currency.is_valid?("BRL")
   """
-  def get_currencies() do
-    response = HTTPotion.get("http://apilayer.net/api/list?%20access_key=#{@api_key}")
-
-    if HTTPotion.Response.success?(response),
-      do: Poison.decode!(response.body),
-      else: get_json("currency_list.json")
+  @spec is_valid?(String.t()) :: boolean()
+  def is_valid?(currency) when byte_size(currency) > 0 do
+    currency_list() |> Map.has_key?(currency)
   end
 
   @doc """
-  Get the currency data from json file in case of unable to get in the server
+  Get the currencys list in compliance with ISO 4217.
+  This method will looking for it in the list on server or/and in the json file.
 
   ## Examples
-    Currency.get_json("currency_list.json")<br/>
-    Currency.get_json("currency_rates.json")
+    Currency.currency_list()
   """
-  def get_json(file_name) do
-    case File.read(file_name) do
-      {:ok, body} -> Poison.decode!(body)
-      {:error, reason} -> {:error, "Unable to get the data from server and file: #{reason}"}
+  @spec currency_list() :: map() | RuntimeError
+  def currency_list() do
+    Agent.start_link(fn -> %{} end, name: __MODULE__)
+
+    cond do
+      currency_list!(:request) != {:error} -> Agent.get(__MODULE__, fn map -> map end)
+      currency_list!(:json) != {:error} -> Agent.get(__MODULE__, fn map -> map end)
+      true -> raise "Unable to get list from server and json file"
+    end
+  end
+
+  @spec currency_list!(atom()) :: map() | {:error}
+  defp currency_list!(:request) do
+    # Requesting currency list from server
+    response = HTTPotion.get("http://apilayer.net/api/list?%20access_key=#{@api_key}")
+
+    if HTTPotion.Response.success?(response) do
+      Agent.update(__MODULE__, fn %{} -> Poison.decode!(response.body)["currencies"] end)
+    else
+      {:error}
+    end
+  end
+
+  @spec currency_list!(atom()) :: map() | {:error}
+  defp currency_list!(:json) do
+    # Getting currency list from file
+    case File.read("currency_list.json") do
+      {:ok, body} ->
+        Agent.update(__MODULE__, fn %{} -> Poison.decode!(body)["currencies"] end)
+
+      true ->
+        {:error}
     end
   end
 
   @doc """
-  Get the currency rate in relation to USD
+  Get the currencys rates.
+  This method will looking for the rates on server or/and in the json file.
 
   ## Examples
-    Currency.get_rate("BRL", "USD")
+    Currency.currency_rate()
   """
-  def get_rate(from_currency, to_currency) do
-    from_currency = String.upcase(from_currency, :default)
-    to_currency = String.upcase(to_currency, :default)
+  @spec currency_rate() :: map() | RuntimeError
+  def currency_rate() do
+    Agent.start_link(fn -> %{} end, name: __MODULE__)
 
-    response =
-      HTTPotion.get(
-        "http://apilayer.net/api/live?access_key=#{@api_key}&currencies=#{from_currency},#{
-          to_currency
-        }&format=1"
-      )
+    cond do
+      currency_rate!(:request) != {:error} ->
+        Agent.get(__MODULE__, fn map -> map end)
 
-    if HTTPotion.Response.success?(response),
-      do: Poison.decode!(response.body),
-      else: get_json("currency_rates.json")
+      currency_rate!(:json) != {:error} ->
+        Agent.get(__MODULE__, fn map -> map end)
+
+      true ->
+        raise "Unable to get the rate from server and json file"
+    end
   end
 
-  @doc """
-  Check if a currency is on the list
+  @spec currency_rate!(:request) :: map() | {:error}
+  defp currency_rate!(:request) do
+    # Requesting currency rates from server
+    response = HTTPotion.get("http://apilayer.net/api/live?access_key=#{@api_key}&format=1")
 
-  ## Examples
-    Currency.check_currency("BRL")
-  """
-  def check_currency(currency) do
-    if Map.has_key?(get_currencies()["currencies"], String.upcase(currency, :default)),
-      do: true,
-      else: false
+    if HTTPotion.Response.success?(response) do
+      Agent.update(__MODULE__, fn %{} -> Poison.decode!(response.body)["quotes"] end)
+    else
+      {:error}
+    end
+  end
+
+  @spec currency_rate!(:json) :: map() | {:error}
+  defp currency_rate!(:json) do
+    # Getting currency list from server
+    case File.read("currency_rates.json") do
+      {:ok, body} -> Agent.update(__MODULE__, fn %{} -> Poison.decode!(body)["quotes"] end)
+      true -> {:error}
+    end
   end
 end
