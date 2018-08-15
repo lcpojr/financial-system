@@ -64,12 +64,12 @@ defmodule FinancialSystemTest do
     account2: account2
   } do
     # Transfer with insufficient amount
-    assert FinancialSystem.transfer(account5, account2, 2000) == {:error, "Insufficient funds"}
+    assert_raise RuntimeError, fn -> FinancialSystem.transfer(account5, account2, 2000) end
   end
 
   test "A transfer should be cancelled if an error occurs", %{account1: account1} do
     # Transfer with invalid account
-    assert_raise UndefinedFunctionError, fn -> FinancialSystem.transfer(account1, nil, 50) end
+    assert_raise FunctionClauseError, fn -> FinancialSystem.transfer(account1, nil, 50) end
   end
 
   test "A transfer can be splitted between 2 or more accounts", %{
@@ -97,7 +97,7 @@ defmodule FinancialSystemTest do
     ]
 
     # Split with wrong percentage
-    assert FinancialSystem.split(account3, list_accounts, 100) == {:error, "Invalid percentage"}
+    assert_raise ArgumentError, fn -> FinancialSystem.split(account3, list_accounts, 100) end
   end
 
   test "User should be able to exchange money between different currencies" do

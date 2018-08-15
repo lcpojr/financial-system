@@ -84,7 +84,7 @@ defmodule FinancialSystem do
       to_account = deposit(to_account, from_account.currency, amount)
       {from_account, to_account}
     else
-      raise(ArgumentError, message: "insuficient funds")
+      raise "insuficient funds"
     end
   end
 
@@ -122,10 +122,12 @@ defmodule FinancialSystem do
       Enum.map_every(list_accounts, 1, fn to_account ->
         # Calculating the new amounts by percentage
         value_percentage =
-          Decimal.mult(amount, to_account.percentage)
+          amount
+          |> Decimal.new()
+          |> Decimal.mult(to_account.percentage)
           |> Decimal.div(100)
           |> Decimal.round(2)
-          |> Kernel.trunc()
+          |> Decimal.to_float()
 
         deposit(to_account.data, from_account.currency, value_percentage)
       end)
@@ -154,7 +156,7 @@ defmodule FinancialSystem do
   ## Examples
     FinancialSystem.exchange("BRL","USD", 100)
   """
-  @spec exchange(String.t(), String.t(), number())
+  @spec exchange(String.t(), String.t(), number()) :: number()
   def exchange(from_currency, to_currency, amount)
       when byte_size(from_currency) > 0 and byte_size(to_currency) > 0 and is_number(amount) do
     cond do
@@ -172,21 +174,31 @@ defmodule FinancialSystem do
     end
   end
 
-  @spec exchange!(String.t(), String.t(), number())
+  @spec exchange!(list(), String.t(), String.t(), number()) :: number()
   defp exchange!(rate_list, from_currency, _to_currency = "USD", amount) do
     # Exchange other currency to dollar
-    Decimal.div(amount, to_rate) |> Decimal.round(2)
+    amount
+    |> Decimal.new()
+    |> Decimal.mult(Decimal.new(rate_list["USD#{from_currency}"]))
+    |> Decimal.round(2)
   end
 
-  @spec exchange!(String.t(), String.t(), number())
+  @spec exchange!(list(), String.t(), String.t(), number()) :: number()
   defp exchange!(rate_list, _from_currency = "USD", to_currency, amount) do
-    # Exchange dollar currency to currency
-    Decimal.mult(amount, from_rate) |> Decimal.round(2)
+    # Exchange dollar to another currency
+    amount
+    |> Decimal.new()
+    |> Decimal.div(Decimal.new(rate_list["USD#{to_currency}"]))
+    |> Decimal.round(2)
   end
 
-  @spec exchange!(String.t(), String.t(), number())
+  @spec exchange!(list(), String.t(), String.t(), number()) :: number()
   defp exchange!(rate_list, from_currency, to_currency, amount) do
     # Exchange two different currencys that isn't dollar
-    Decimal.div(amount, to_rate) |> Decimal.mult(from_rate) |> Decimal.round(2)
+    amount
+    |> Decimal.new()
+    |> Decimal.div(Decimal.new(rate_list["USD#{to_currency}"]))
+    |> Decimal.mult(Decimal.new(rate_list["USD#{from_currency}"]))
+    |> Decimal.round(2)
   end
 end
