@@ -1,47 +1,62 @@
 defmodule Account do
   @moduledoc """
-  This module armazenate the account struct.
+  This module define the account struct and functions.
   """
   @enforce_keys [:name, :email, :currency]
   defstruct name: "", email: "", currency: "USD", amount: 0
 
-  import Currency
+  @typedoc """
+    Abstract account struct type
+  """
+  @type t :: %Account{
+          name: String.t(),
+          email: String.t(),
+          currency: String.t(),
+          amount: Decimal.t()
+        }
 
   @doc """
   Create user accounts
 
   ## Examples
-    Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)
+    Account.create("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)
   """
-  def create_account(name, email, currency, amount \\ 0) do
-    if check_currency(currency) do
-      %Account{name: name, email: email, currency: currency, amount: Decimal.new(amount)}
+  @spec create(String.t(), String.t(), String.t(), float()) :: t() | ArgumentError
+  def create(name, email, currency, amount \\ 0)
+      when byte_size(name) > 0 and byte_size(email) > 0 and byte_size(currency) > 0 do
+    if Currency.is_valid?(currency) do
+      %Account{
+        name: name,
+        email: email,
+        currency: String.upcase(currency),
+        amount: Decimal.new(amount)
+      }
     else
-      {:error, "Invalid currency"}
+      raise(ArgumentError, message: "invalid currency")
     end
   end
 
   @doc """
-  Get the account amount in float
+  Get the account funds in float
 
   ## Examples
-    account = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)<br/>
-    Account.get_amount(account)
+    account = Account.create("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)<br/>
+    Account.balance(account)
   """
-  def get_amount(account) do
-    {account.currency, Decimal.round(account.amount, 2) |> Decimal.to_float()}
+  @spec balance(t()) :: float()
+  def balance(%Account{} = account) do
+    Decimal.round(account.amount, 2) |> Decimal.to_float()
   end
 
   @doc """
   Check if the account has sufficient funds
 
   ## Examples
-    account = Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)<br/>
-    Account.has_amount(account, 100)
+    account = Account.create("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)<br/>
+    Account.has_funds?(account, 100)
   """
-  def has_amount(account, amount) do
-    if Decimal.cmp(account.amount, amount) == :gt or Decimal.cmp(account.amount, amount) == :eq,
-      do: true,
-      else: false
+  @spec has_funds?(t(), float()) :: boolean()
+  def has_funds?(%Account{} = account, amount) do
+    Enum.member?([:eq, :gt], Decimal.cmp(account.amount, amount))
   end
 end

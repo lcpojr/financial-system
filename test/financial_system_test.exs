@@ -6,11 +6,11 @@ defmodule FinancialSystemTest do
     {
       :ok,
       [
-        account1: Account.create_account("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500),
-        account2: Account.create_account("JOÃO PEDRO", "joao@gmail.com", "BRL", 500),
-        account3: Account.create_account("CECILIA MARIA", "cecilia@gmail.com", "USD", 250),
-        account4: Account.create_account("JULIANA MATOS", "juliana@gmail.com", "EUR", 100),
-        account5: Account.create_account("LUCAS TAMARINO", "lucas@gmail.com", "GBP")
+        account1: Account.create("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500),
+        account2: Account.create("JOÃO PEDRO", "joao@gmail.com", "BRL", 500),
+        account3: Account.create("CECILIA MARIA", "cecilia@gmail.com", "USD", 250),
+        account4: Account.create("JULIANA MATOS", "juliana@gmail.com", "EUR", 100),
+        account5: Account.create("LUCAS TAMARINO", "lucas@gmail.com", "GBP")
       ]
     }
   end
