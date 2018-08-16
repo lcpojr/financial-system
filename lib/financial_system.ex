@@ -17,20 +17,20 @@ defmodule FinancialSystem do
     currency = String.upcase(currency)
 
     if Currency.is_valid?(currency) do
-      deposit!(account, account.currency == currency, currency, amount)
+      do_deposit(account, account.currency == currency, currency, amount)
     else
       raise(ArgumentError, message: "invalid currency")
     end
   end
 
-  @spec deposit!(Account.t(), true, String.t(), number()) :: Account.t()
-  defp deposit!(account, _same_currency = true, _currency, amount) do
+  @spec do_deposit(Account.t(), true, String.t(), number()) :: Account.t()
+  defp do_deposit(account, _same_currency = true, _currency, amount) do
     # Deposit in the same Currency
     %{account | amount: Decimal.add(account.amount, amount) |> Decimal.round(2)}
   end
 
-  @spec deposit!(Account.t(), false, String.t(), number()) :: Account.t()
-  defp deposit!(account, _same_currency = false, currency, amount) do
+  @spec do_deposit(Account.t(), false, String.t(), number()) :: Account.t()
+  defp do_deposit(account, _same_currency = false, currency, amount) do
     # Deposit with exchange
     amount = exchange(account.currency, currency, amount)
     %{account | amount: Decimal.add(account.amount, amount) |> Decimal.round(2)}
@@ -49,20 +49,20 @@ defmodule FinancialSystem do
     currency = String.upcase(currency)
 
     if Currency.is_valid?(currency) do
-      debit!(account, account.currency == currency, currency, amount)
+      do_debit(account, account.currency == currency, currency, amount)
     else
       raise(ArgumentError, message: "invalid currency")
     end
   end
 
-  @spec debit!(Account.t(), true, String.t(), number()) :: Account.t()
-  defp debit!(account, _same_currency = true, _currency, amount) do
+  @spec do_debit(Account.t(), true, String.t(), number()) :: Account.t()
+  defp do_debit(account, _same_currency = true, _currency, amount) do
     # Debit in the same currency
     %{account | amount: Decimal.sub(account.amount, amount) |> Decimal.round(2)}
   end
 
-  @spec debit!(Account.t(), false, String.t(), number()) :: Account.t()
-  defp debit!(account, _same_currency = false, currency, amount) do
+  @spec do_debit(Account.t(), false, String.t(), number()) :: Account.t()
+  defp do_debit(account, _same_currency = false, currency, amount) do
     # Debit with exchange
     amount = exchange(account.currency, currency, amount)
     %{account | amount: Decimal.sub(account.amount, amount) |> Decimal.round(2)}
@@ -110,12 +110,12 @@ defmodule FinancialSystem do
         raise(ArgumentError, message: "invalid percentage")
 
       true ->
-        split!(from_account, list_accounts, amount)
+        do_split(from_account, list_accounts, amount)
     end
   end
 
-  @spec split!(Account.t(), list(), number()) :: {Account.t(), [Account.t()]}
-  defp split!(from_account, list_accounts, amount) do
+  @spec do_split(Account.t(), list(), number()) :: {Account.t(), [Account.t()]}
+  defp do_split(from_account, list_accounts, amount) do
     from_account = debit(from_account, from_account.currency, amount)
 
     list_accounts =
@@ -170,12 +170,12 @@ defmodule FinancialSystem do
         amount
 
       true ->
-        Currency.currency_rate() |> exchange!(from_currency, to_currency, amount)
+        Currency.currency_rate() |> do_exchange(from_currency, to_currency, amount)
     end
   end
 
-  @spec exchange!(list(), String.t(), String.t(), number()) :: number()
-  defp exchange!(rate_list, from_currency, _to_currency = "USD", amount) do
+  @spec do_exchange(list(), String.t(), String.t(), number()) :: number()
+  defp do_exchange(rate_list, from_currency, _to_currency = "USD", amount) do
     # Exchange other currency to dollar
     amount
     |> Decimal.new()
@@ -183,8 +183,8 @@ defmodule FinancialSystem do
     |> Decimal.round(2)
   end
 
-  @spec exchange!(list(), String.t(), String.t(), number()) :: number()
-  defp exchange!(rate_list, _from_currency = "USD", to_currency, amount) do
+  @spec do_exchange(list(), String.t(), String.t(), number()) :: number()
+  defp do_exchange(rate_list, _from_currency = "USD", to_currency, amount) do
     # Exchange dollar to another currency
     amount
     |> Decimal.new()
@@ -192,8 +192,8 @@ defmodule FinancialSystem do
     |> Decimal.round(2)
   end
 
-  @spec exchange!(list(), String.t(), String.t(), number()) :: number()
-  defp exchange!(rate_list, from_currency, to_currency, amount) do
+  @spec do_exchange(list(), String.t(), String.t(), number()) :: number()
+  defp do_exchange(rate_list, from_currency, to_currency, amount) do
     # Exchange two different currencys that isn't dollar
     amount
     |> Decimal.new()

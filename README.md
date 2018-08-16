@@ -13,7 +13,7 @@ The idea of this project is create a set of tools capable of dealing with moneta
 
 ## Requeriments / Dependencies
 
-- [Elixir](https://github.com/elixir-lang/elixir) (v1.6.5)
+- [Elixir](https://github.com/elixir-lang/elixir) (v1.7.2)
 - [HTTPotion](https://github.com/myfreeweb/httpotion) (To make the HTTP requests)
 - [Poison](https://github.com/devinus/poison) (To parse the HTTP Json response)
 - [Decimal](https://github.com/ericmj/decimal) (To arbitrary precision arithmetic)
@@ -73,6 +73,7 @@ list_accounts = [
 
 `mix test` to run unit tests.  
 `MIX_ENV=test mix coveralls` to run coverage test.
+`mix dialyzer` to run the dialyzer.  
 
 ## Formatation
 
@@ -88,4 +89,5 @@ It will create a doc folder in the project with the HTML pages.
 To ensure the quality of the code some tools were used:
 
 * [ExCoveralls](https://coveralls.io/github/lcpojr/financial-system) for couverage test.
+* [Dialyxir] (https://github.com/jeremyjh/dialyxir) to simplify use of Dialyzer.
 * [Semaphore](https://semaphoreci.com/lcpojr/financial-system) for continuous integration.

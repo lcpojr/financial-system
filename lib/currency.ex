@@ -33,14 +33,14 @@ defmodule Currency do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
 
     cond do
-      currency_list!(:request) != {:error} -> Agent.get(__MODULE__, fn map -> map end)
-      currency_list!(:json) != {:error} -> Agent.get(__MODULE__, fn map -> map end)
+      do_currency_list(:request) != {:error} -> Agent.get(__MODULE__, fn map -> map end)
+      do_currency_list(:json) != {:error} -> Agent.get(__MODULE__, fn map -> map end)
       true -> raise "Unable to get list from server and json file"
     end
   end
 
-  @spec currency_list!(atom()) :: map() | {:error}
-  defp currency_list!(:request) do
+  @spec do_currency_list(atom()) :: map() | {:error}
+  defp do_currency_list(:request) do
     # Requesting currency list from server
     response = HTTPotion.get("http://apilayer.net/api/list?%20access_key=#{@api_key}")
 
@@ -51,8 +51,8 @@ defmodule Currency do
     end
   end
 
-  @spec currency_list!(atom()) :: map() | {:error}
-  defp currency_list!(:json) do
+  @spec do_currency_list(atom()) :: map() | {:error}
+  defp do_currency_list(:json) do
     # Getting currency list from file
     case File.read("currency_list.json") do
       {:ok, body} ->
@@ -75,10 +75,10 @@ defmodule Currency do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
 
     cond do
-      currency_rate!(:request) != {:error} ->
+      do_currency_rate(:request) != {:error} ->
         Agent.get(__MODULE__, fn map -> map end)
 
-      currency_rate!(:json) != {:error} ->
+      do_currency_rate(:json) != {:error} ->
         Agent.get(__MODULE__, fn map -> map end)
 
       true ->
@@ -86,8 +86,8 @@ defmodule Currency do
     end
   end
 
-  @spec currency_rate!(:request) :: map() | {:error}
-  defp currency_rate!(:request) do
+  @spec do_currency_rate(:request) :: map() | {:error}
+  defp do_currency_rate(:request) do
     # Requesting currency rates from server
     response = HTTPotion.get("http://apilayer.net/api/live?access_key=#{@api_key}&format=1")
 
@@ -98,8 +98,8 @@ defmodule Currency do
     end
   end
 
-  @spec currency_rate!(:json) :: map() | {:error}
-  defp currency_rate!(:json) do
+  @spec do_currency_rate(:json) :: map() | {:error}
+  defp do_currency_rate(:json) do
     # Getting currency list from server
     case File.read("currency_rates.json") do
       {:ok, body} -> Agent.update(__MODULE__, fn %{} -> Poison.decode!(body)["quotes"] end)

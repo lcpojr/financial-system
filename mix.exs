@@ -44,7 +44,9 @@ defmodule FinancialSystem.Mixfile do
       # Documentation
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       # Coverage test
-      {:excoveralls, "~> 0.8", only: :test}
+      {:excoveralls, "~> 0.8", only: :test},
+      # Dialyxir test
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false}
     ]
   end
 end
