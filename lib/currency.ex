@@ -53,7 +53,6 @@ defmodule Currency do
   @spec do_currency_list(atom()) :: map() | {:error}
   defp do_currency_list(:json) do
     # Getting currency list from file
-    IO.puts("JSON")
 
     case File.read("currency_list.json") do
       {:ok, body} ->
