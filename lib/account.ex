@@ -22,9 +22,11 @@ defmodule Account do
     Account.create("LUIZ CARLOS", "luiz@gmail.com", "BRL", 500)
   """
   @spec create(String.t(), String.t(), String.t(), float()) :: t() | ArgumentError
-  def create(name, email, currency, amount \\ 0)
-      when byte_size(name) > 0 and byte_size(email) > 0 and byte_size(currency) > 0 do
-    if Currency.is_valid?(currency) do
+  def create(name, email, currency, amount \\ 0) do
+    with true <- byte_size(name) > 0,
+         true <- byte_size(email) > 0,
+         true <- Currency.is_valid?(currency),
+         true <- is_number(amount) do
       %Account{
         name: name,
         email: email,
@@ -32,7 +34,7 @@ defmodule Account do
         amount: Decimal.new(amount)
       }
     else
-      raise(ArgumentError, message: "invalid currency")
+      _error -> raise(ArgumentError, message: "invalid arguments")
     end
   end
 

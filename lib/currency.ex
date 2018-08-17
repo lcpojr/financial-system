@@ -42,18 +42,18 @@ defmodule Currency do
   @spec do_currency_list(atom()) :: map() | {:error}
   defp do_currency_list(:request) do
     # Requesting currency list from server
-    response = HTTPotion.get("http://apilayer.net/api/list?%20access_key=#{@api_key}")
-
-    if HTTPotion.Response.success?(response) do
+    with response <- HTTPotion.get("http://apilayer.net/api/list?%20access_key=#{@api_key}"),
+         true <- HTTPotion.Response.success?(response) do
       Agent.update(__MODULE__, fn %{} -> Poison.decode!(response.body)["currencies"] end)
     else
-      {:error}
+      _error -> {:error}
     end
   end
 
   @spec do_currency_list(atom()) :: map() | {:error}
   defp do_currency_list(:json) do
     # Getting currency list from file
+
     case File.read("currency_list.json") do
       {:ok, body} ->
         Agent.update(__MODULE__, fn %{} -> Poison.decode!(body)["currencies"] end)
@@ -89,12 +89,12 @@ defmodule Currency do
   @spec do_currency_rate(:request) :: map() | {:error}
   defp do_currency_rate(:request) do
     # Requesting currency rates from server
-    response = HTTPotion.get("http://apilayer.net/api/live?access_key=#{@api_key}&format=1")
-
-    if HTTPotion.Response.success?(response) do
+    with response <-
+           HTTPotion.get("http://apilayer.net/api/live?access_key=#{@api_key}&format=1"),
+         true <- HTTPotion.Response.success?(response) do
       Agent.update(__MODULE__, fn %{} -> Poison.decode!(response.body)["quotes"] end)
     else
-      {:error}
+      _error -> {:error}
     end
   end
 
