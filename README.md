@@ -89,5 +89,5 @@ It will create a doc folder in the project with the HTML pages.
 To ensure the quality of the code some tools were used:
 
 * [ExCoveralls](https://coveralls.io/github/lcpojr/financial-system) for couverage test.
-* [Dialyxir] (https://github.com/jeremyjh/dialyxir) to simplify use of Dialyzer.
+* [Dialyxir](https://github.com/jeremyjh/dialyxir) to simplify use of Dialyzer.
 * [Semaphore](https://semaphoreci.com/lcpojr/financial-system) for continuous integration.
